@@ -12,16 +12,17 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 
 ## Program structure
 (Will replace with graphical diagram soon)
-
+<pre>
 |------------------------------|
 |       Flappy Bird Game       |                   |--------------|                     |---------------|
 |                              |  --Game State-->  |     Bot      |  --Game Results-->  |    Genetic    |
 |    Game           Game       |                   |  Controller  |                     |  Algorirthm   |
 |  Resources     Controller    |  <---Controls---  |              |   <---New Bots---   |               |
 |------------------------------|                   |--------------|                     |---------------|
+</pre>
 
 
 ## ToDo
 - Everything
-- Make program architecture prettier
+- Make architecture diagram prettier
 
