@@ -2,10 +2,17 @@ import pygame
 from pygame.locals import *
 import random
 
+
+###############################
+####### Definitions ###########
+###############################
 #Global Environment Definitions
-pipe_gap = 150
-pipe_frequency = 1500 #ms
+screenWidth = 864
+screenHeight = 936
 groundHeight = 768
+groundLength = 35
+windowTitle = 'Flappy Bots'
+
 #Global Player Definitions
 startHeight = int(groundHeight / 2)
 startDist = 100
@@ -14,15 +21,17 @@ birdAccel = 0.5
 jumpSpeed = -8
 flapCooldown = 5
 rotateFactor = -3
+
 #define Game variables
-groundScroll = 0 #move to environment init
 scrollSpeed = 4
+pipeGap = 150
+pipeFrequency = 1500 #ms
 gameover = False #move to game controller init
-lastPipe = pygame.time.get_ticks() - pipe_frequency
+lastPipe = pygame.time.get_ticks() - pipeFrequency
 passPipe = False
 
 
-class Bird(pygame.sprite.Sprite):
+class bird(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.images = []
@@ -82,8 +91,7 @@ class Bird(pygame.sprite.Sprite):
         self.birdAlive = False
 
 
-
-class Pipe(pygame.sprite.Sprite):
+class pipe(pygame.sprite.Sprite):
     def __init__(self, x, y, position):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('img/pipe.png')
@@ -91,14 +99,47 @@ class Pipe(pygame.sprite.Sprite):
         #position = 1 is a top pipe, = -1 is a bottom
         if position == 1:
             self.image = pygame.transform.flip(self.image, False, True)
-            self.rect.bottomleft = [x, (y - int(pipe_gap / 2))]
+            self.rect.bottomleft = [x, (y - int(pipeGap / 2))]
         if position == -1:
-            self.rect.topleft = [x, (y + int(pipe_gap / 2))]
+            self.rect.topleft = [x, (y + int(pipeGap / 2))]
 
     def update(self):
-        self.rect.x -= scroll_speed
+        self.rect.x -= scrollSpeed
         if self.rect.right < 0:
             self.kill()
 
+
+class environment():
+    def __init__(self, guiEnabled):
+        self.backgroundImg = pygame.image.load('img/bg.png')
+        self.groundImg = pygame.image.load('img/ground.png')
+        self.guiEnabled = guiEnabled
+        self.groundScroll = 0
+
+        if self.guiEnabled:
+            self.screen = pygame.display.set_mode((screenWidth, screenHeight))
+            pygame.display.set_caption(windowTitle)
+            #draw scene
+            self.screen.blit(self.backgroundImg, (0, 0))
+            self.renderGround()
+
+    def renderGround(self):
+        self.screen.blit(self.groundImg, (self.groundScroll, groundHeight))
+
+    def renderElements(self, pipeGroup, birdGroup):
+        pipeGroup.draw(self.screen)
+        birdGroup.draw(self.screen)
+
+    def updateGround(self):
+        #Scroll the ground
+        self.groundScroll -= scrollSpeed
+        if abs(self.groundScroll) > groundLength:
+            self.groundScroll = 0
+
+    def update(self, pipeGroup, birdGroup):
+        if self.guiEnabled:
+            self.updateGround()
+            self.renderElements(pipeGroup, birdGroup)
+            self.renderGround()
 
 

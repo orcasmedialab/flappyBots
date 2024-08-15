@@ -23,6 +23,8 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 
 
 ## ToDo
-- Everything
-- Make architecture diagram prettier
+- Create test file: Test environment, test bird
+- Overhaul pipe class
+- Create gameplay class
+- Create game controller
 
