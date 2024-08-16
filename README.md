@@ -11,7 +11,7 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 
 
 ## Program structure
-(Will replace with graphical diagram soon)
+
 <pre>
 |------------------------------|
 |       Flappy Bird Game       |                   |--------------|                     |---------------|
@@ -23,7 +23,6 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 
 
 ## ToDo
-- Create test file: Test environment, test bird
 - Overhaul pipe class
 - Create gameplay class
 - Create game controller

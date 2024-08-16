@@ -1,3 +1,4 @@
+
 import pygame
 from pygame.locals import *
 import random
@@ -38,6 +39,7 @@ class bird(pygame.sprite.Sprite):
         for num in range (1,4):
             img = pygame.image.load(f'img/bird{num}.png')
             self.images.append(img)
+        self.index = 0
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
         self.faceDown = -90
@@ -119,16 +121,18 @@ class environment():
         if self.guiEnabled:
             self.screen = pygame.display.set_mode((screenWidth, screenHeight))
             pygame.display.set_caption(windowTitle)
-            #draw scene
-            self.screen.blit(self.backgroundImg, (0, 0))
-            self.renderGround()
+            self.renderScene()
 
-    def renderGround(self):
+    def renderScene(self):
+        self.screen.blit(self.backgroundImg, (0, 0))
         self.screen.blit(self.groundImg, (self.groundScroll, groundHeight))
+
+    def renderBird(self, birdGroup):
+        birdGroup.draw(self.screen)
 
     def renderElements(self, pipeGroup, birdGroup):
         pipeGroup.draw(self.screen)
-        birdGroup.draw(self.screen)
+        self.renderBird(birdGroup)
 
     def updateGround(self):
         #Scroll the ground
