@@ -25,7 +25,8 @@ rotateFactor = -3
 
 #define Game variables
 scrollSpeed = 4
-pipeGap = 150
+pipeGapSize = 150
+pipeOffsetRange = 150 #+/-
 pipeFrequency = 1500 #ms
 gameover = False #move to game controller init
 lastPipe = pygame.time.get_ticks() - pipeFrequency
@@ -84,13 +85,25 @@ class bird(pygame.sprite.Sprite):
             #bird moves backwards with ground
             self.rect.x -= int(scrollSpeed)
 
-    def updateBird(self, jumpAction):
+    def update(self, jumpAction):
         self.updatePhysics()
         self.jump(jumpAction)
         self.animateBird()
 
     def killBird(self):
         self.birdAlive = False
+
+
+class birdGroup(pygame.sprite.Group):
+    def __init__(self, numBirds):
+        pygame.sprite.Group.__init__(self)
+        for i in range(1, numBirds):
+            self.add(bird())
+
+    def jumpCycle(self, jumpInstructions):
+        print('send instruction to each bird')
+        for bird in range(1, (len(self) - 1)):
+            self.sprites()[bird].jump(jumpInstructions[bird])
 
 
 class pipe(pygame.sprite.Sprite):
@@ -101,9 +114,9 @@ class pipe(pygame.sprite.Sprite):
         #position = 1 is a top pipe, = -1 is a bottom
         if position == 1:
             self.image = pygame.transform.flip(self.image, False, True)
-            self.rect.bottomleft = [x, (y - int(pipeGap / 2))]
+            self.rect.bottomleft = [x, (y - int(pipeGapSize / 2))]
         if position == -1:
-            self.rect.topleft = [x, (y + int(pipeGap / 2))]
+            self.rect.topleft = [x, (y + int(pipeGapSize / 2))]
 
     def update(self):
         self.rect.x -= scrollSpeed
@@ -111,11 +124,27 @@ class pipe(pygame.sprite.Sprite):
             self.kill()
 
 
+class pipeGroup(pygame.sprite.Group):
+    def __init__(self):
+        pygame.sprite.Group.__init__(self)
+
+    def generateNewPipes(self):
+        pipeHeight = random.randint((-1 * pipeOffsetRange), pipeOffsetRange)
+        bottomPipe = pipe(screenWidth, int(groundHeight / 2) + pipeHeight, -1)
+        topPipe = pipe(screenWidth, int(groundHeight / 2) + pipeHeight, 1)
+        self.add(bottomPipe)
+        self.add(topPipe)
+
+
+#Responsible for rendering and animating all game elements
+#Also manages pipes but not birds (only animate)
 class environment():
     def __init__(self, guiEnabled):
+        self.guiEnabled = guiEnabled
         self.backgroundImg = pygame.image.load('img/bg.png')
         self.groundImg = pygame.image.load('img/ground.png')
-        self.guiEnabled = guiEnabled
+        self.pipeGroup = pipeGroup()
+        self.lastPipeTime = 0
         self.groundScroll = 0
 
         if self.guiEnabled:
@@ -127,12 +156,15 @@ class environment():
         self.screen.blit(self.backgroundImg, (0, 0))
         self.screen.blit(self.groundImg, (self.groundScroll, groundHeight))
 
-    def renderBird(self, birdGroup):
+    def renderBirds(self, birdGroup):
         birdGroup.draw(self.screen)
 
-    def renderElements(self, pipeGroup, birdGroup):
-        pipeGroup.draw(self.screen)
-        self.renderBird(birdGroup)
+    def renderPipes(self):
+        self.pipeGroup.draw(self.screen)
+
+    def renderElements(self, birdGroup):
+        self.renderPipes()
+        self.renderBirds(birdGroup)
 
     def updateGround(self):
         #Scroll the ground
@@ -140,10 +172,17 @@ class environment():
         if abs(self.groundScroll) > groundLength:
             self.groundScroll = 0
 
-    def update(self, pipeGroup, birdGroup):
+    def updatePipes(self, timeNow):
+        if (timeNow - self.lastPipeTime) > pipeFrequency:
+            self.pipeGroup.generateNewPipes()
+            self.lastPipeTime = timeNow
+        self.pipeGroup.update()
+
+    def update(self, birdGroup, timeNow):
         if self.guiEnabled:
             self.updateGround()
-            self.renderElements(pipeGroup, birdGroup)
-            self.renderGround()
+            self.updatePipes(timeNow)
+            self.renderScene()
+            self.renderElements(birdGroup)
 
 
