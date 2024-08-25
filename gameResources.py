@@ -22,6 +22,7 @@ birdAccel = 0.5
 jumpSpeed = -8
 flapCooldown = 5
 rotateFactor = -3
+downwardAngle = -90
 
 #define Game variables
 scrollSpeed = 4
@@ -34,17 +35,21 @@ passPipe = False
 
 
 class bird(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, birdID):
         pygame.sprite.Sprite.__init__(self)
+        self.id = birdID
+        self.loadImages()
+        self.rect = self.image.get_rect()
+        self.faceDown = downwardAngle
+        self.reset()
+
+    def loadImages(self):
         self.images = []
         for num in range (1,4):
             img = pygame.image.load(f'img/bird{num}.png')
             self.images.append(img)
         self.index = 0
         self.image = self.images[self.index]
-        self.rect = self.image.get_rect()
-        self.faceDown = -90
-        self.reset()
 
     def reset(self):
         self.index = 0
@@ -62,7 +67,7 @@ class bird(pygame.sprite.Sprite):
             self.rect.y += int(self.vel)
 
     def jump(self, jumpAction):
-        if jumpAction:
+        if jumpAction[self.id]:
             self.vel = jumpSpeed
 
     def animateBird(self):
@@ -85,9 +90,9 @@ class bird(pygame.sprite.Sprite):
             #bird moves backwards with ground
             self.rect.x -= int(scrollSpeed)
 
-    def update(self, jumpAction):
+    def update(self, jumpInstructionSet):
         self.updatePhysics()
-        self.jump(jumpAction)
+        self.jump(jumpInstructionSet)
         self.animateBird()
 
     def killBird(self):
@@ -97,13 +102,8 @@ class bird(pygame.sprite.Sprite):
 class birdGroup(pygame.sprite.Group):
     def __init__(self, numBirds):
         pygame.sprite.Group.__init__(self)
-        for i in range(1, numBirds):
-            self.add(bird())
-
-    def jumpCycle(self, jumpInstructions):
-        print('send instruction to each bird')
-        for bird in range(1, (len(self) - 1)):
-            self.sprites()[bird].jump(jumpInstructions[bird])
+        for birdID in range(0, (numBirds - 1)):
+            self.add(bird(birdID))
 
 
 class pipe(pygame.sprite.Sprite):
