@@ -29,9 +29,6 @@ scrollSpeed = 4
 pipeGapSize = 150
 pipeOffsetRange = 150 #+/-
 pipeFrequency = 1500 #ms
-gameover = False #move to game controller init
-lastPipe = pygame.time.get_ticks() - pipeFrequency
-passPipe = False
 
 
 class bird(pygame.sprite.Sprite):
@@ -45,7 +42,7 @@ class bird(pygame.sprite.Sprite):
 
     def loadImages(self):
         self.images = []
-        for num in range (1,4):
+        for num in range (1, 4):
             img = pygame.image.load(f'img/bird{num}.png')
             self.images.append(img)
         self.index = 0
@@ -71,7 +68,7 @@ class bird(pygame.sprite.Sprite):
             self.vel = jumpSpeed
 
     def animateBird(self):
-        if self.birdAlive:
+        if self.isAlive():
             #flapping animation
             if self.counter > flapCooldown:
                 self.counter = 0
@@ -95,6 +92,9 @@ class bird(pygame.sprite.Sprite):
         self.jump(jumpInstructionSet)
         self.animateBird()
 
+    def isAlive(self):
+        return self.birdAlive
+
     def killBird(self):
         self.birdAlive = False
 
@@ -102,7 +102,7 @@ class bird(pygame.sprite.Sprite):
 class birdGroup(pygame.sprite.Group):
     def __init__(self, numBirds):
         pygame.sprite.Group.__init__(self)
-        for birdID in range(0, (numBirds - 1)):
+        for birdID in range(numBirds):
             self.add(bird(birdID))
 
 
@@ -146,6 +146,7 @@ class environment():
         self.pipeGroup = pipeGroup()
         self.lastPipeTime = 0
         self.groundScroll = 0
+        self.gameOver = False
 
         if self.guiEnabled:
             self.screen = pygame.display.set_mode((screenWidth, screenHeight))
@@ -178,11 +179,58 @@ class environment():
             self.lastPipeTime = timeNow
         self.pipeGroup.update()
 
+    def endGame(self):
+        self.gameOver = True
+
     def update(self, birdGroup, timeNow):
         if self.guiEnabled:
-            self.updateGround()
-            self.updatePipes(timeNow)
+            if self.gameOver == False:
+                self.updateGround()
+                self.updatePipes(timeNow)
             self.renderScene()
             self.renderElements(birdGroup)
+
+
+class gameplay():
+    def __init__(self, bg, env):
+        #init gameplay class
+        self.birdGroup = bg
+        self.environment = env
+        self.pipeGroup = self.environment.pipeGroup
+        self.numBirds = len(self.birdGroup)
+        self.reset()
+
+    def reset(self):
+        self.remBirds = self.numBirds
+        self.gameOver = False
+
+    def birdHealth(self):
+        #check to see if each alive bird has hit anything.
+        #if so, kill it
+        for bird in self.birdGroup:
+            if bird.isAlive():
+                if (pygame.sprite.spritecollideany(bird, self.pipeGroup)):
+                    bird.killBird()
+                    self.remBirds -= 1
+                    #print(bird.id)
+
+    def updateScore(self):
+        #track score for each alive bird
+        print('update score')
+
+    def endGame(self):
+        self.gameOver = True
+        self.environment.endGame()
+
+    def checkGameStatus(self):
+        #determine if the game has ended
+        if self.remBirds == 0:
+            self.endGame()
+            #ToDo: inform birds
+    
+    def update(self):
+        self.birdHealth()
+        self.checkGameStatus()
+
 
 
