@@ -1,6 +1,7 @@
 
 import pygame
 from pygame.locals import *
+import numpy as np
 import random
 
 
@@ -63,6 +64,9 @@ class bird(pygame.sprite.Sprite):
                 self.vel += birdAccel
             self.rect.y += int(self.vel)
 
+    def incrementScore(self):
+        self.score += 1
+
     def jump(self, jumpAction):
         if jumpAction[self.id]:
             self.vel = jumpSpeed
@@ -118,15 +122,17 @@ class pipe(pygame.sprite.Sprite):
         if position == -1:
             self.rect.topleft = [x, (y + int(pipeGapSize / 2))]
 
-    def update(self):
+    def update(self, pipeGroup):
         self.rect.x -= scrollSpeed
         if self.rect.right < 0:
+            pipeGroup.decrementIndex()
             self.kill()
 
 
 class pipeGroup(pygame.sprite.Group):
     def __init__(self):
         pygame.sprite.Group.__init__(self)
+        self.currentIndex = 0
 
     def generateNewPipes(self):
         pipeHeight = random.randint((-1 * pipeOffsetRange), pipeOffsetRange)
@@ -134,6 +140,12 @@ class pipeGroup(pygame.sprite.Group):
         topPipe = pipe(screenWidth, int(groundHeight / 2) + pipeHeight, 1)
         self.add(bottomPipe)
         self.add(topPipe)
+
+    def incrementIndex(self):
+        self.currentIndex += 2  #two to account for top and bottom pipe
+
+    def decrementIndex(self):
+        self.currentIndex -= 1  #one because called twice, by each top/bottom
 
 
 #Responsible for rendering and animating all game elements
@@ -177,7 +189,7 @@ class environment():
         if (timeNow - self.lastPipeTime) > pipeFrequency:
             self.pipeGroup.generateNewPipes()
             self.lastPipeTime = timeNow
-        self.pipeGroup.update()
+        self.pipeGroup.update(self.pipeGroup)
 
     def endGame(self):
         self.gameOver = True
@@ -192,31 +204,44 @@ class environment():
 
 
 class gameplay():
-    def __init__(self, bg, env):
+    def __init__(self, bg, env, collisionsEnabled):
         #init gameplay class
         self.birdGroup = bg
         self.environment = env
+        self .collisionsEnabled = collisionsEnabled
         self.pipeGroup = self.environment.pipeGroup
         self.numBirds = len(self.birdGroup)
         self.reset()
 
     def reset(self):
         self.remBirds = self.numBirds
+        self.score = np.zeros(self.numBirds)
         self.gameOver = False
 
     def birdHealth(self):
         #check to see if each alive bird has hit anything.
         #if so, kill it
-        for bird in self.birdGroup:
-            if bird.isAlive():
-                if (pygame.sprite.spritecollideany(bird, self.pipeGroup)):
-                    bird.killBird()
-                    self.remBirds -= 1
-                    #print(bird.id)
+        if self.collisionsEnabled:
+            for bird in self.birdGroup:
+                if bird.isAlive():
+                    if (pygame.sprite.spritecollideany(bird, self.pipeGroup)):
+                        bird.killBird()
+                        self.remBirds -= 1
 
     def updateScore(self):
         #track score for each alive bird
-        print('update score')
+        if len(self.pipeGroup) > 0:
+            scoreUpdate = False
+            for bird in self.birdGroup:
+                if bird.isAlive():
+                    # ToDo: make this line cleaner
+                    if bird.rect.left > self.pipeGroup.sprites()[self.pipeGroup.currentIndex].rect.right:
+                            self.score[bird.id] += 1
+                            bird.incrementScore()
+                            scoreUpdate = True
+                            #print('bird #', bird.id, ': ', bird.score)
+            if scoreUpdate:
+                self.pipeGroup.incrementIndex()
 
     def endGame(self):
         self.gameOver = True
@@ -231,6 +256,7 @@ class gameplay():
     def update(self):
         self.birdHealth()
         self.checkGameStatus()
+        self.updateScore()
 
 
 

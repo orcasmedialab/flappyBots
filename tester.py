@@ -9,11 +9,14 @@ pygame.init()
 
 clock = pygame.time.Clock()
 fps = 60
+guiEnabled = True
+collisionsEnabled = True
+
 screenWidth = gr.screenWidth
 groundHeight = gr.groundHeight
 
 #environment stuff
-birdWorld = gr.environment(True)
+birdWorld = gr.environment(guiEnabled)
 
 #bird stuff
 numBirds = 100
@@ -22,7 +25,7 @@ counter = 0
 flapCooldown = 30
 
 #gameplay stuff
-gameplay = gr.gameplay(birdGroup, birdWorld)
+gameplay = gr.gameplay(birdGroup, birdWorld, collisionsEnabled)
 
 
 run = True

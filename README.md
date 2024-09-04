@@ -23,7 +23,18 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 
 
 ## ToDo
-- Overhaul pipe class
-- Create gameplay class
+**Primary**
+- "Get" functions for element coordinates
+- Kill bird when it hits ground or sky
+- Fix draw order
 - Create game controller
+- Create bot controller
+- Implement genetic algorithm 
+- Remove clock governance (dependency on "ticks"). Allow program to execute at max speed.
+
+**Non-Critical**
+- Move global definitions to yaml file
+- Address console warnings at start
+- Bug (maybe?) where sometimes pipe isn't scored
+- Pass gameover status to individual birds. Would stop sliding
 
