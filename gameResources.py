@@ -62,6 +62,12 @@ class bird(pygame.sprite.Sprite):
     
     def getTop(self):
         return self.rect.top
+    
+    def getLeft(self):
+        return self.rect.left
+    
+    def getVel(self):
+        return self.vel
 
     def updatePhysics(self):
         #gravity
@@ -128,9 +134,15 @@ class pipe(pygame.sprite.Sprite):
         if position == -1:
             self.rect.topleft = [x, (y + int(pipeGapSize / 2))]
 
+    def getRight(self):
+        return self.rect.right
+    
+    def getTopRight(self):
+        return self.rect.topright
+
     def update(self, pipeGroup):
         self.rect.x -= scrollSpeed
-        if self.rect.right < 0:
+        if self.getRight() < 0:
             pipeGroup.decrementIndex()
             self.kill()
 
@@ -152,6 +164,12 @@ class pipeGroup(pygame.sprite.Group):
 
     def decrementIndex(self):
         self.currentIndex -= 1  #one because called twice, by each top/bottom
+
+    def getSide(self):
+        return self.sprites()[self.currentIndex].getRight()
+    
+    def getCorner(self):
+        return self.sprites()[self.currentIndex].getTopRight()
 
 
 #Responsible for rendering and animating all game elements
@@ -242,12 +260,11 @@ class gameplay():
             scoreUpdate = False
             for bird in self.birdGroup:
                 if bird.isAlive():
-                    # ToDo: make this line cleaner
-                    if bird.rect.left > self.pipeGroup.sprites()[self.pipeGroup.currentIndex].rect.right:
-                            self.score[bird.id] += 1
-                            bird.incrementScore()
-                            scoreUpdate = True
-                            #print('bird #', bird.id, ': ', bird.score)
+                    if bird.getLeft() > self.pipeGroup.getSide():
+                        self.score[bird.id] += 1
+                        bird.incrementScore()
+                        scoreUpdate = True
+                        #print('bird #', bird.id, ': ', bird.score)
             if scoreUpdate:
                 self.pipeGroup.incrementIndex()
 

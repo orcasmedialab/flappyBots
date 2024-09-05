@@ -24,7 +24,6 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 
 ## ToDo
 **Primary**
-- "Get" functions for element coordinates
 - Fix draw order
 - Create game controller
 - Create bot controller
