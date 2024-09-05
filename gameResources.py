@@ -57,9 +57,15 @@ class bird(pygame.sprite.Sprite):
         self.score = 0
         self.birdAlive = True
 
+    def getBottom(self):
+        return self.rect.bottom
+    
+    def getTop(self):
+        return self.rect.top
+
     def updatePhysics(self):
         #gravity
-        if self.rect.bottom < groundHeight:
+        if self.getBottom() < groundHeight:
             if self.vel < terminalVel:
                 self.vel += birdAccel
             self.rect.y += int(self.vel)
@@ -68,7 +74,7 @@ class bird(pygame.sprite.Sprite):
         self.score += 1
 
     def jump(self, jumpAction):
-        if jumpAction[self.id]:
+        if jumpAction[self.id] and self.isAlive():
             self.vel = jumpSpeed
 
     def animateBird(self):
@@ -224,7 +230,9 @@ class gameplay():
         if self.collisionsEnabled:
             for bird in self.birdGroup:
                 if bird.isAlive():
-                    if (pygame.sprite.spritecollideany(bird, self.pipeGroup)):
+                    if (pygame.sprite.spritecollideany(bird, self.pipeGroup) or
+                            bird.getBottom() >= groundHeight or
+                            bird.getTop() < 0):
                         bird.killBird()
                         self.remBirds -= 1
 
