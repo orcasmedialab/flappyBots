@@ -127,6 +127,9 @@ class pipe(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load('img/pipe.png')
         self.rect = self.image.get_rect()
+        self.selfGenerate(x, y, position)
+
+    def selfGenerate(self, x, y, position):
         #position = 1 is a top pipe, = -1 is a bottom
         if position == 1:
             self.image = pygame.transform.flip(self.image, False, True)
@@ -139,12 +142,18 @@ class pipe(pygame.sprite.Sprite):
     
     def getTopRight(self):
         return self.rect.topright
+    
+    def scrollPipe(self):
+        self.rect.x -= scrollSpeed
+
+    def removePipe(self, pipeGroup):
+        pipeGroup.decrementIndex()
+        self.kill()
 
     def update(self, pipeGroup):
-        self.rect.x -= scrollSpeed
+        self.scrollPipe()
         if self.getRight() < 0:
-            pipeGroup.decrementIndex()
-            self.kill()
+            self.removePipe(pipeGroup)
 
 
 class pipeGroup(pygame.sprite.Group):
@@ -187,10 +196,21 @@ class environment():
         if self.guiEnabled:
             self.screen = pygame.display.set_mode((screenWidth, screenHeight))
             pygame.display.set_caption(windowTitle)
-            self.renderScene()
+            self.renderScene(None)
+        else:
+            self.screen = pygame.display.set_mode((1, 1))
 
-    def renderScene(self):
+
+    def renderScene(self, birdGroup):
+        self.renderBackground()
+        if birdGroup is not None:
+            self.renderElements(birdGroup)
+        self.renderGround()
+
+    def renderBackground(self):
         self.screen.blit(self.backgroundImg, (0, 0))
+
+    def renderGround(self):
         self.screen.blit(self.groundImg, (self.groundScroll, groundHeight))
 
     def renderBirds(self, birdGroup):
@@ -219,12 +239,12 @@ class environment():
         self.gameOver = True
 
     def update(self, birdGroup, timeNow):
+        if self.gameOver == False:
+                self.updatePipes(timeNow)
         if self.guiEnabled:
             if self.gameOver == False:
                 self.updateGround()
-                self.updatePipes(timeNow)
-            self.renderScene()
-            self.renderElements(birdGroup)
+            self.renderScene(birdGroup)
 
 
 class gameplay():
@@ -270,11 +290,12 @@ class gameplay():
 
     def endGame(self):
         self.gameOver = True
+        print('GameOver')
         self.environment.endGame()
 
     def checkGameStatus(self):
         #determine if the game has ended
-        if self.remBirds == 0:
+        if self.remBirds == 0 and self.gameOver == False:
             self.endGame()
             #ToDo: inform birds
     
