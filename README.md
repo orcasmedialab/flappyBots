@@ -22,12 +22,26 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 </pre>
 
 
+## Run Requirements
+- python 3.12 or newer
+- pygame 2.6 or newer
+
+
+## Instructions
+from flappyBots/ directory:
+```console
+python3 flappyBots.py
+```
+
+
 ## ToDo
 **Primary**
-- Create game controller
 - Improve all class reset functions
 - Create bot controller
+- Update README Features section
+- Update runtime options (flags)
 - Implement genetic algorithm 
+- Enable parallel compute capabilities
 
 **Non-Critical**
 - Move global definitions to yaml file
