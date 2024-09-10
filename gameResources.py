@@ -226,11 +226,11 @@ class environment():
     def updateGround(self):
         #Scroll the ground
         self.groundScroll -= scrollSpeed
-        self.totalMovement += scrollSpeed
         if abs(self.groundScroll) > groundLength:
             self.groundScroll = 0
 
     def updatePipes(self):
+        self.totalMovement += scrollSpeed
         if (self.totalMovement % pipeCadence) < scrollSpeed:
             self.pipeGroup.generateNewPipes()
         self.pipeGroup.update(self.pipeGroup)

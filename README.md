@@ -24,7 +24,6 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 
 ## ToDo
 **Primary**
-- Make new spatial-dependent (nontemporal) version compatible with headless 
 - Create game controller
 - Improve all class reset functions
 - Create bot controller
