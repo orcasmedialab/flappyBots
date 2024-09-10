@@ -27,9 +27,9 @@ downwardAngle = -90
 
 #define Game variables
 scrollSpeed = 4
-pipeGapSize = 150
-pipeOffsetRange = 150 #+/-
-pipeFrequency = 1500 #ms
+pipeGapSize = 150 #space between top/bottom pipe
+pipeOffsetRange = 150 #+/-, range of random vertical shift
+pipeCadence = 400 #distance from one set of pipes to next
 
 
 class bird(pygame.sprite.Sprite):
@@ -189,7 +189,7 @@ class environment():
         self.backgroundImg = pygame.image.load('img/bg.png')
         self.groundImg = pygame.image.load('img/ground.png')
         self.pipeGroup = pipeGroup()
-        self.lastPipeTime = 0
+        self.totalMovement = 0
         self.groundScroll = 0
         self.gameOver = False
 
@@ -226,21 +226,21 @@ class environment():
     def updateGround(self):
         #Scroll the ground
         self.groundScroll -= scrollSpeed
+        self.totalMovement += scrollSpeed
         if abs(self.groundScroll) > groundLength:
             self.groundScroll = 0
 
-    def updatePipes(self, timeNow):
-        if (timeNow - self.lastPipeTime) > pipeFrequency:
+    def updatePipes(self):
+        if (self.totalMovement % pipeCadence) < scrollSpeed:
             self.pipeGroup.generateNewPipes()
-            self.lastPipeTime = timeNow
         self.pipeGroup.update(self.pipeGroup)
 
     def endGame(self):
         self.gameOver = True
 
-    def update(self, birdGroup, timeNow):
+    def update(self, birdGroup):
         if self.gameOver == False:
-                self.updatePipes(timeNow)
+                self.updatePipes()
         if self.guiEnabled:
             if self.gameOver == False:
                 self.updateGround()

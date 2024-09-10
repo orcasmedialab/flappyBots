@@ -35,8 +35,7 @@ while run:
     clock.tick(fps)
 
 
-    timeNow = pygame.time.get_ticks()
-    birdWorld.update(birdGroup, timeNow)
+    birdWorld.update(birdGroup)
 
     if counter == flapCooldown:
         jump = True
