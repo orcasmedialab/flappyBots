@@ -17,7 +17,7 @@ collisionsEnabled = True
 realTime = True
 #bird stuff
 numBirds = 100
-flapCooldown = 30
+flapProbability = 30 # p=1/30, flap with probability p each time called
 
 
 class gameController():
@@ -36,19 +36,19 @@ class gameController():
     def resetGame(self):
         print('call all reset functions')
 
+    #returns a boolean array with each value having a 1/flapProbability of being True
     def randJumpGenerator(self):
-        jumpIS = np.random.choice([False, True], size = (numBirds,), 
-                p = [(flapCooldown-1) / flapCooldown, 1./flapCooldown])
-        return jumpIS
+        jumpInstructionSet = np.random.choice([False, True], size = (numBirds,), 
+                p = [(flapProbability-1) / flapProbability, 1./flapProbability])
+        return jumpInstructionSet
 
 
-    def step(self):
+    def step(self, jumpInstructionSet):
         if realTime:
             self.clock.tick(fps)
 
         self.birdWorld.update(self.birdGroup)
-        jumpIS = self.randJumpGenerator()
-        self.birdGroup.update(jumpIS)
+        self.birdGroup.update(jumpInstructionSet)
         self.gameplay.update()
 
 

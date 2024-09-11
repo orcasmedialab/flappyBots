@@ -37,6 +37,7 @@ python3 flappyBots.py
 
 ## ToDo
 **Primary**
+- Have Game Controller compile and return game state dict
 - Improve all class reset functions
 - Create bot controller
 - Update README Features section
@@ -45,6 +46,7 @@ python3 flappyBots.py
 - Enable parallel compute capabilities
 
 **Non-Critical**
+- Move randJumpGenerator() to Bot Controller
 - Move global definitions to yaml file
 - Address console warnings at start
 - Bug (maybe?) where sometimes pipe isn't scored

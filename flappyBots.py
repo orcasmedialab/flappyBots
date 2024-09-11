@@ -14,7 +14,8 @@ flappyBots = gc.gameController()
 
 
 while run:
-    flappyBots.step()
+ 
+    flappyBots.step(flappyBots.randJumpGenerator())
 
 
     for event in pygame.event.get():
