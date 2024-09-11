@@ -25,7 +25,6 @@ class gameController():
         #initiate all game resources
         pygame.init()
         self.clock = pygame.time.Clock()
-        self.running = True
         #init environment
         self.screenWidth = gr.screenWidth
         self.groundHeight = gr.groundHeight
@@ -42,23 +41,15 @@ class gameController():
                 p = [(flapCooldown-1) / flapCooldown, 1./flapCooldown])
         return jumpIS
 
-    def run(self):
-        while self.running:
-            if realTime:
-                self.clock.tick(fps)
 
-            self.birdWorld.update(self.birdGroup)
-            jumpIS = self.randJumpGenerator()
-            self.birdGroup.update(jumpIS)
-            self.gameplay.update()
+    def step(self):
+        if realTime:
+            self.clock.tick(fps)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.running = False
-
-            pygame.display.update()
-
-        pygame.quit()
+        self.birdWorld.update(self.birdGroup)
+        jumpIS = self.randJumpGenerator()
+        self.birdGroup.update(jumpIS)
+        self.gameplay.update()
 
 
 

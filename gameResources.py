@@ -197,8 +197,6 @@ class environment():
             self.screen = pygame.display.set_mode((screenWidth, screenHeight))
             pygame.display.set_caption(windowTitle)
             self.renderScene(None)
-        else:
-            self.screen = pygame.display.set_mode((1, 1))
 
 
     def renderScene(self, birdGroup):
@@ -206,6 +204,7 @@ class environment():
         if birdGroup is not None:
             self.renderElements(birdGroup)
         self.renderGround()
+        pygame.display.update()
 
     def renderBackground(self):
         self.screen.blit(self.backgroundImg, (0, 0))
