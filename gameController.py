@@ -36,6 +36,25 @@ class gameController():
     def resetGame(self):
         print('call all reset functions')
 
+    def isGameOver(self):
+        return self.gameplay.isGameOver()
+
+    def gameStateCompiler(self):
+        gameState = dict()
+        #pipeX and pipeY refer to the coordinates of the top-right corner of upcoming bottom pipe
+        #if no pipes exist, values are both assigned to -1
+        pipeCorner = self.birdWorld.getPipeLocation()
+        gameState['pipeX'] = pipeCorner[0]
+        gameState['pipeY'] = pipeCorner[1]
+        #birdY is a list of of "bird heights" in reference to the bottom of the bird sprite
+        #birdVel is a list of all vertical velocities
+        #stores "None"s if bird is dead
+        gameState['birdY'] = self.birdGroup.getBirdHeights()
+        gameState['birdVel'] = self.birdGroup.getBirdVelocities()
+        
+        return gameState
+
+
     #returns a boolean array with each value having a 1/flapProbability of being True
     def randJumpGenerator(self):
         jumpInstructionSet = np.random.choice([False, True], size = (numBirds,), 

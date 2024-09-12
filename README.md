@@ -1,5 +1,5 @@
 # flappyBots
-A stepwise-progression version of the classic game **Flappy Bird**, sourced from a python/pygame version of the program in my flappyBird repo. The primary objective is make the game controllable by a set of bots, which can be generated and improved by a genetic ML algorithm.
+A stepwise-progression version of the classic game **Flappy Bird**, sourced from a pygame version of the program in my flappyBird repo. The primary objective is to make the game controllable by a set of bots that get generated and improved by a genetic ML algorithm.
 
 ## Features
 - **Multiplayer**: Game can be initiated with multiple simultaneous AI players.
@@ -25,7 +25,7 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 ## Run Requirements
 - python 3.12 or newer
 - pygame 2.6 or newer
-- 950px vertical resolution
+- 950px vertical resolution (minimum)
 
 
 ## Instructions
@@ -37,7 +37,6 @@ python3 flappyBots.py
 
 ## ToDo
 **Primary**
-- Have Game Controller compile and return game state dict
 - Improve all class reset functions
 - Create bot controller
 - Update README Features section

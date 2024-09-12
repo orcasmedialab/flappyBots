@@ -65,9 +65,6 @@ class bird(pygame.sprite.Sprite):
     
     def getLeft(self):
         return self.rect.left
-    
-    def getVel(self):
-        return self.vel
 
     def updatePhysics(self):
         #gravity
@@ -120,6 +117,14 @@ class birdGroup(pygame.sprite.Group):
         pygame.sprite.Group.__init__(self)
         for birdID in range(numBirds):
             self.add(bird(birdID))
+
+    def getBirdVelocities(self):
+        birdVels = [bird.vel if bird.birdAlive else None for bird in self.sprites()]
+        return birdVels
+    
+    def getBirdHeights(self):
+        birdHeights = [bird.rect.bottom if bird.birdAlive else None for bird in self.sprites()]
+        return birdHeights
 
 
 class pipe(pygame.sprite.Sprite):
@@ -199,6 +204,12 @@ class environment():
             self.renderScene(None)
 
 
+    def getPipeLocation(self):
+        if len(self.pipeGroup) > 0:
+            return self.pipeGroup.getCorner()
+        else:
+            return (-1, -1)
+
     def renderScene(self, birdGroup):
         self.renderBackground()
         if birdGroup is not None:
@@ -260,6 +271,9 @@ class gameplay():
         self.remBirds = self.numBirds
         self.score = np.zeros(self.numBirds)
         self.gameOver = False
+        
+    def isGameOver(self):
+        return self.gameOver
 
     def birdHealth(self):
         #check to see if each alive bird has hit anything.
