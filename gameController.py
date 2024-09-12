@@ -5,13 +5,17 @@ import pygame
 from pygame.locals import *
 import gameResources as gr
 import numpy as np
+import sys
+import time
 
 
 ###############################
 ####### Definitions ###########
 ###############################
 #Gametime Run Settings
-fps = 60
+framerate = 60 #fps
+resetTime = 5 #sec
+numberIterations = 1 #if zero, run indefinitely
 guiEnabled = True
 collisionsEnabled = True
 realTime = True
@@ -32,9 +36,18 @@ class gameController():
         self.birdGroup = gr.birdGroup(numBirds)
         #init gameplay
         self.gameplay = gr.gameplay(self.birdGroup, self.birdWorld, collisionsEnabled)
+        self.completeRuns = 0 #number of runs executed
+        self.reinitializeCounter()
+
+    def reinitializeCounter(self):
+        self.resetCounter = 0
+        print('  Iteration #', (self.completeRuns + 1), sep='')
+
 
     def resetGame(self):
-        print('call all reset functions')
+        self.reinitializeCounter()
+        self.birdWorld.reset(self.birdGroup)
+        self.gameplay.reset()
 
     def isGameOver(self):
         return self.gameplay.isGameOver()
@@ -64,11 +77,22 @@ class gameController():
 
     def step(self, jumpInstructionSet):
         if realTime:
-            self.clock.tick(fps)
+            self.clock.tick(framerate)
 
         self.birdWorld.update(self.birdGroup)
         self.birdGroup.update(jumpInstructionSet)
         self.gameplay.update()
+
+        if self.isGameOver():
+            self.completeRuns += 1
+            if realTime and (self.resetCounter < (framerate * resetTime)):
+                self.resetCounter += 1
+            else:
+                if (numberIterations == 0) or (self.completeRuns < numberIterations):
+                    self.resetGame()
+                else:
+                    time.sleep(resetTime)
+                    sys.exit()
 
 
 

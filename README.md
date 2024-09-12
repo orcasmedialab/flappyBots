@@ -37,7 +37,6 @@ python3 flappyBots.py
 
 ## ToDo
 **Primary**
-- Improve all class reset functions
 - Create bot controller
 - Update README Features section
 - Update runtime options (flags)

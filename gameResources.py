@@ -118,6 +118,10 @@ class birdGroup(pygame.sprite.Group):
         for birdID in range(numBirds):
             self.add(bird(birdID))
 
+    def reset(self):
+        for bird in self.sprites():
+            bird.reset()
+
     def getBirdVelocities(self):
         birdVels = [bird.vel if bird.birdAlive else None for bird in self.sprites()]
         return birdVels
@@ -166,6 +170,11 @@ class pipeGroup(pygame.sprite.Group):
         pygame.sprite.Group.__init__(self)
         self.currentIndex = 0
 
+    def reset(self):
+        for pipe in self.sprites():
+            pipe.removePipe(self)
+        self.currentIndex = 0
+
     def generateNewPipes(self):
         pipeHeight = random.randint((-1 * pipeOffsetRange), pipeOffsetRange)
         bottomPipe = pipe(screenWidth, int(groundHeight / 2) + pipeHeight, -1)
@@ -194,14 +203,24 @@ class environment():
         self.backgroundImg = pygame.image.load('img/bg.png')
         self.groundImg = pygame.image.load('img/ground.png')
         self.pipeGroup = pipeGroup()
-        self.totalMovement = 0
-        self.groundScroll = 0
-        self.gameOver = False
+        self.setWindow()
+        self.reset(None)
 
+    def setWindow(self):
         if self.guiEnabled:
             self.screen = pygame.display.set_mode((screenWidth, screenHeight))
             pygame.display.set_caption(windowTitle)
-            self.renderScene(None)
+
+    def reset(self, birdGroup):
+        self.totalMovement = 0
+        self.groundScroll = 0
+        self.gameOver = False
+        if len(self.pipeGroup) > 0:
+            self.pipeGroup.reset()
+        if birdGroup is not None:
+            birdGroup.reset()
+        if self.guiEnabled:
+            self.renderScene(birdGroup)
 
 
     def getPipeLocation(self):
@@ -258,11 +277,11 @@ class environment():
 
 
 class gameplay():
-    def __init__(self, bg, env, collisionsEnabled):
+    def __init__(self, birdGroup, environment, collisionsEnabled):
         #init gameplay class
-        self.birdGroup = bg
-        self.environment = env
-        self .collisionsEnabled = collisionsEnabled
+        self.birdGroup = birdGroup
+        self.environment = environment
+        self.collisionsEnabled = collisionsEnabled
         self.pipeGroup = self.environment.pipeGroup
         self.numBirds = len(self.birdGroup)
         self.reset()
@@ -304,6 +323,7 @@ class gameplay():
     def endGame(self):
         self.gameOver = True
         print('GameOver')
+        #print(self.score)
         self.environment.endGame()
 
     def checkGameStatus(self):
