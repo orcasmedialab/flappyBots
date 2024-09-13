@@ -293,6 +293,9 @@ class gameplay():
         
     def isGameOver(self):
         return self.gameOver
+    
+    def getScore(self):
+        return self.score
 
     def birdHealth(self):
         #check to see if each alive bird has hit anything.

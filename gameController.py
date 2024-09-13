@@ -67,9 +67,12 @@ class gameController():
         gameState['pipeY'] = pipeCorner[1]
         #birdY is a list of of "bird heights" in reference to the bottom of the bird sprite
         #birdVel is a list of all vertical velocities
-        #stores "None"s if bird is dead
+        #Each stores "None" if bird is dead
         gameState['birdY'] = self.birdGroup.getBirdHeights()
         gameState['birdVel'] = self.birdGroup.getBirdVelocities()
+        # State of game (i.e. gameover) and current or final score for all birds
+        gameState['gameOver'] = self.isGameOver()
+        gameState['score'] = self.gameplay.getScore()
         
         return gameState
 
