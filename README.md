@@ -29,21 +29,30 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 
 
 ## Instructions
-from flappyBots/ directory:
+from `flappyBots/` directory:
 ```console
-python3 flappyBots.py
+python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 ```
+<pre>
+-h --help    Help Menu
+-i --iters   Number of iterations [Default=1]
+-g --gui     Disable(0) or Enable(1) GUI [Default=1]
+-f --fast    Run at regular game speed (0) or max speed (1) [Default=1]
+-b --birds   Number of birds [Default=100]
+</pre>
 
 
 ## ToDo
 **Primary**
 - Create bot controller
 - Update README Features section
-- Update runtime options (flags)
 - Implement genetic algorithm 
+- Auto-set number of iterations
 - Enable parallel compute capabilities
 
 **Non-Critical**
+- Add verbose runtime argument
+- Make program exit better
 - Move randJumpGenerator() to Bot Controller
 - Move global definitions to yaml file
 - Address console warnings at start

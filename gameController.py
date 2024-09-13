@@ -14,7 +14,7 @@ import time
 ###############################
 #Gametime Run Settings
 framerate = 60 #fps
-resetTime = 5 #sec
+resetTime = 2 #sec
 numberIterations = 1 #if zero, run indefinitely
 guiEnabled = True
 collisionsEnabled = True
@@ -25,10 +25,11 @@ flapProbability = 30 # p=1/30, flap with probability p each time called
 
 
 class gameController():
-    def __init__(self):
+    def __init__(self, args):
         #initiate all game resources
         pygame.init()
         self.clock = pygame.time.Clock()
+        self.updateGlobals(args)
         #init environment
         self.screenWidth = gr.screenWidth
         self.groundHeight = gr.groundHeight
@@ -42,6 +43,11 @@ class gameController():
     def reinitializeCounter(self):
         self.resetCounter = 0
         print('  Iteration #', (self.completeRuns + 1), sep='')
+
+    #Updates globals with command line arguments
+    #Bad practice. Potentially change in future
+    def updateGlobals(self, args):
+        globals().update( (k,v) for k,v in args.items() if v is not None)
 
 
     def resetGame(self):
@@ -84,10 +90,10 @@ class gameController():
         self.gameplay.update()
 
         if self.isGameOver():
-            self.completeRuns += 1
             if realTime and (self.resetCounter < (framerate * resetTime)):
                 self.resetCounter += 1
             else:
+                self.completeRuns += 1
                 if (numberIterations == 0) or (self.completeRuns < numberIterations):
                     self.resetGame()
                 else:
