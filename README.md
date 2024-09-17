@@ -44,7 +44,7 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 
 ## ToDo
 **Primary**
-- Create bot controller
+- Bug where game freezes at the end of last iteration on fast mode
 - Update README Features section
 - Implement genetic algorithm 
 - Auto-set number of iterations

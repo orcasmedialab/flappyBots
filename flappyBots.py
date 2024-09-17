@@ -5,6 +5,7 @@ import pygame
 from pygame.locals import *
 import argparse
 import gameController as gc
+import botController as bc
 
 
 
@@ -32,14 +33,16 @@ if __name__ == '__main__':
 
 run = True
 
-flappyBots = gc.gameController(argDict)
+
+flappy = gc.gameController(argDict)
+bots = bc.botController(flappy.getNumBirds())
 
 
 
 
 while run:
  
-    flappyBots.step(flappyBots.randJumpGenerator())
+    flappy.step(flappy.randJumpGenerator())
 
 
     for event in pygame.event.get():

@@ -49,6 +49,10 @@ class gameController():
     def updateGlobals(self, args):
         globals().update( (k,v) for k,v in args.items() if v is not None)
 
+    
+    def getNumBirds(self):
+        global numBirds
+        return numBirds
 
     def resetGame(self):
         self.reinitializeCounter()
