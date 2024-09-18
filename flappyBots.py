@@ -42,7 +42,12 @@ bots = bc.botController(flappy.getNumBirds())
 
 while run:
  
-    flappy.step(flappy.randJumpGenerator())
+    # Send game state to bot algorithm to produce jump instructions
+    gameState = flappy.gameStateCompiler()
+    jumpInstructions = bots.getInstructions(gameState)
+
+    # Step-wise progress through game, each bird sent corresponding command
+    flappy.step(jumpInstructions)
 
 
     for event in pygame.event.get():

@@ -23,8 +23,9 @@ A stepwise-progression version of the classic game **Flappy Bird**, sourced from
 
 
 ## Run Requirements
-- python 3.12 or newer
-- pygame 2.6 or newer
+- [python](https://www.python.org/) 3.12 or newer
+- [Pygame](https://github.com/pygame) (based on v2.6)
+- [PyGad](https://github.com/ahmedfgad/GeneticAlgorithmPython) (based on v3.3)
 - 950px vertical resolution (minimum)
 
 
@@ -44,9 +45,10 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 
 ## ToDo
 **Primary**
-- Bug where game freezes at the end of last iteration on fast mode
+- Optimize numpy initializations
+- Implement genetic training algorithm 
 - Update README Features section
-- Implement genetic algorithm 
+- Optimize GANN structure and parameters
 - Auto-set number of iterations
 - Enable parallel compute capabilities
 
@@ -58,4 +60,6 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 - Address console warnings at start
 - Bug (maybe?) where sometimes pipe isn't scored
 - Pass gameover status to individual birds. Would stop sliding
+- Bug where game freezes at the end of last iteration on fast mode
+- Edit nn.py to resolve bug with single-dimension inputs
 
