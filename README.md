@@ -45,21 +45,26 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 
 ## ToDo
 **Primary**
-- Optimize numpy initializations
-- Implement genetic training algorithm 
+- Update algorithmic grading to use horizontal progress instead of game score
+- Resolve (mutex?) issue that causes program to run painfully slow
+- Add runtime arguments related to training algorithm
+- Save training history of algorithm
 - Update README Features section
 - Optimize GANN structure and parameters
+- Resolve redundant repeat calls of fitnessFunction()
 - Auto-set number of iterations
 - Enable parallel compute capabilities
+- Optimize game processes 
+- Edit nn.py to resolve bug with single-dimension inputs
 
 **Non-Critical**
 - Add verbose runtime argument
-- Make program exit better
+- Make program exit more nicely (remove `sys.exit()`)
+- Consider reimplementing game score for algorithmic grading
 - Move randJumpGenerator() to Bot Controller
 - Move global definitions to yaml file
 - Address console warnings at start
 - Bug (maybe?) where sometimes pipe isn't scored
 - Pass gameover status to individual birds. Would stop sliding
 - Bug where game freezes at the end of last iteration on fast mode
-- Edit nn.py to resolve bug with single-dimension inputs
 

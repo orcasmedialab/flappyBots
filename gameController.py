@@ -18,7 +18,7 @@ resetTime = 2 #sec
 numberIterations = 1 #if zero, run indefinitely
 guiEnabled = True
 collisionsEnabled = True
-realTime = True
+realTime = False
 #bird stuff
 numBirds = 100
 flapProbability = 30 # p=1/30, flap with probability p each time called
@@ -97,7 +97,7 @@ class gameController():
         self.gameplay.update()
 
         if self.isGameOver():
-            if realTime and (self.resetCounter < (framerate * resetTime)):
+            if self.resetCounter < (framerate * resetTime):
                 self.resetCounter += 1
             else:
                 self.completeRuns += 1
