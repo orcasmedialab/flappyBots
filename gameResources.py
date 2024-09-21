@@ -30,6 +30,7 @@ scrollSpeed = 4
 pipeGapSize = 150 #space between top/bottom pipe
 pipeOffsetRange = 150 #+/-, range of random vertical shift
 pipeCadence = 400 #distance from one set of pipes to next
+useBirdProgress = True
 
 
 class bird(pygame.sprite.Sprite):
@@ -55,6 +56,7 @@ class bird(pygame.sprite.Sprite):
         self.rect.center = [startDist, startHeight]
         self.vel = 0
         self.score = 0
+        self.finalProgress = 0
         self.birdAlive = True
 
     def getBottom(self):
@@ -65,6 +67,9 @@ class bird(pygame.sprite.Sprite):
     
     def getLeft(self):
         return self.rect.left
+    
+    def getFinalProgress(self):
+        return self.finalProgress
 
     def updatePhysics(self):
         #gravity
@@ -108,8 +113,9 @@ class bird(pygame.sprite.Sprite):
     def isAlive(self):
         return self.birdAlive
 
-    def killBird(self):
+    def killBird(self, totalMovement):
         self.birdAlive = False
+        self.finalProgress = totalMovement
 
 
 class birdGroup(pygame.sprite.Group):
@@ -129,6 +135,10 @@ class birdGroup(pygame.sprite.Group):
     def getBirdHeights(self):
         birdHeights = [bird.rect.bottom if bird.birdAlive else None for bird in self.sprites()]
         return birdHeights
+    
+    def getBirdProgress(self):
+        birdProgress = np.array([bird.getFinalProgress() for bird in self.sprites()])
+        return birdProgress
 
 
 class pipe(pygame.sprite.Sprite):
@@ -228,6 +238,9 @@ class environment():
             return self.pipeGroup.getCorner()
         else:
             return (-1, -1)
+        
+    def getTotalMovement(self):
+        return self.totalMovement
 
     def renderScene(self, birdGroup):
         self.renderBackground()
@@ -295,6 +308,8 @@ class gameplay():
         return self.gameOver
     
     def getScore(self):
+        if useBirdProgress == True:
+            return self.birdGroup.getBirdProgress()
         return self.score
 
     def birdHealth(self):
@@ -306,7 +321,7 @@ class gameplay():
                     if (pygame.sprite.spritecollideany(bird, self.pipeGroup) or
                             bird.getBottom() >= groundHeight or
                             bird.getTop() < 0):
-                        bird.killBird()
+                        bird.killBird(self.environment.getTotalMovement())
                         self.remBirds -= 1
 
     def updateScore(self):

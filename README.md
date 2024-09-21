@@ -45,7 +45,6 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 
 ## ToDo
 **Primary**
-- Update algorithmic grading to use horizontal progress instead of game score
 - Resolve (mutex?) issue that causes program to run painfully slow
 - Add runtime arguments related to training algorithm
 - Save training history of algorithm

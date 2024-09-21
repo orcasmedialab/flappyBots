@@ -103,6 +103,7 @@ class geneticOptimizer(threading.Thread):
             if self.scoreReady:
                 #self.scoreReady = False #moved to callback function
                 lock.release()
+                #print('score: ', self.score)
                 return self.score[solutionIndex]
             lock.release()
             #print('fitnessFunction')
