@@ -5,6 +5,7 @@ import pygad
 import pygad.nn
 import pygad.gann
 import threading
+import numpy as np
 
 ###############################
 ####### Definitions ###########
@@ -70,10 +71,11 @@ class geneticOptimizer(threading.Thread):
         initialPopulation = self.botAlgorithm.getIntialPop()
         self.setNumGenerations(numIters)
 
-        self.score = None
+        self.scores = np.zeros(len(initialPopulation))
         self.scoreReady = False
         self.gannUpdated = True
         self.populationMatricies = None
+        self.iterationsCompleted = 0
 
         self.goInstance = pygad.GA(
             num_generations = self.numGenerations,
@@ -103,21 +105,24 @@ class geneticOptimizer(threading.Thread):
             if self.scoreReady:
                 #self.scoreReady = False #moved to callback function
                 lock.release()
-                #print('score: ', self.score)
-                return self.score[solutionIndex]
+                #print('Score set: ', self.scores, sep = '')
+                return self.scores[solutionIndex]
             lock.release()
-            #print('fitnessFunction')
+            #print('Score: ', max(self.scores), 
+            #        ',  Generation: ', (self.iterationsCompleted + 1),
+            #        sep = '')
     
     def callbackGeneration(self, goInstance):
         self.generatePopMatricies()
         self.botAlgorithm.updateWeights(self.populationMatricies)
         self.gannUpdated = True
         self.scoreReady = False  #ToDo: resolve redundant calls of fitnessFunction()
+        self.iterationsCompleted += 1
         #print('CALLBACK')
         return
     
     def setScore(self, newScore):
-        self.score = newScore
+        self.scores = newScore
         self.scoreReady = True
 
     def getGenUpdateFlag(self):
