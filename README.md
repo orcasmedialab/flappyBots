@@ -45,16 +45,26 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 
 ## ToDo
 **Primary**
-- Resolve (mutex?) issue that causes program to run painfully slow
-- Add runtime arguments related to training algorithm
 - Save training history of algorithm
+- Add runtime arguments related to training algorithm
 - Update README Features section
 - Optimize GANN structure and parameters
-- Resolve redundant repeat calls of fitnessFunction()
+- Address redundant repeat calls of fitnessFunction()
 - Auto-set number of iterations
+- Display game score on screen
+- Add reset button on screen
 - Enable parallel compute capabilities
 - Optimize game processes 
 - Edit nn.py to resolve bug with single-dimension inputs
+
+**Bot Improvements/Thoughts**
+- Make sure not to eliminate good bots after 1 bad/anomalous generation
+- Figure out plan for time limits on positions (next project)
+- Retain more parents, especially in stalemate cases
+- Retain best ancestors from past few generations, despite success levels on most recent run(s)
+- If solutions get pigeonholed into a hopeless strategy, start entire process over. Need to think about how this gets determined for next project.
+- Last point is often associated with "bad starts" that get locked in. May or may not be relevent for next project.
+- Decendents should have a large range of genetic similarity from almost-same to completely different.
 
 **Non-Critical**
 - Add verbose runtime argument

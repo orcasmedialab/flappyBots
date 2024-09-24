@@ -5,6 +5,7 @@ import pygad
 import pygad.nn
 import pygad.gann
 import threading
+import time
 import numpy as np
 
 ###############################
@@ -24,6 +25,7 @@ keepParents = 1
 suppressWarnings = True
 
 lock = threading.Lock()
+lockWaitTime = 0.02
 
 
 class botAlgorithm():
@@ -105,12 +107,9 @@ class geneticOptimizer(threading.Thread):
             if self.scoreReady:
                 #self.scoreReady = False #moved to callback function
                 lock.release()
-                #print('Score set: ', self.scores, sep = '')
                 return self.scores[solutionIndex]
             lock.release()
-            #print('Score: ', max(self.scores), 
-            #        ',  Generation: ', (self.iterationsCompleted + 1),
-            #        sep = '')
+            time.sleep(lockWaitTime)
     
     def callbackGeneration(self, goInstance):
         self.generatePopMatricies()
@@ -118,7 +117,7 @@ class geneticOptimizer(threading.Thread):
         self.gannUpdated = True
         self.scoreReady = False  #ToDo: resolve redundant calls of fitnessFunction()
         self.iterationsCompleted += 1
-        #print('CALLBACK')
+        self.printScore()
         return
     
     def setScore(self, newScore):
@@ -130,6 +129,10 @@ class geneticOptimizer(threading.Thread):
     
     def resetGenUpdateFlag(self):
         self.gannUpdated = False
+
+    def printScore(self):
+        print('Score: ', max(self.scores), sep = '')
+        #print('Scores: ', self.scores, sep = '')
 
     def generatePopMatricies(self):
         self.populationMatricies = pygad.gann.population_as_matrices(
