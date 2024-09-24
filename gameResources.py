@@ -31,6 +31,7 @@ pipeGapSize = 150 #space between top/bottom pipe
 pipeOffsetRange = 150 #+/-, range of random vertical shift
 pipeCadence = 400 #distance from one set of pipes to next
 useBirdProgress = True
+maxScore = 500 #Set to None to have no maximum score
 
 
 class bird(pygame.sprite.Sprite):
@@ -313,14 +314,15 @@ class gameplay():
         return self.score
 
     def birdHealth(self):
-        #check to see if each alive bird has hit anything.
+        #check to see if each alive bird has hit anything or reached max score.
         #if so, kill it
         if self.collisionsEnabled:
             for bird in self.birdGroup:
                 if bird.isAlive():
                     if (pygame.sprite.spritecollideany(bird, self.pipeGroup) or
-                            bird.getBottom() >= groundHeight or
-                            bird.getTop() < 0):
+                            (bird.getBottom() >= groundHeight) or
+                            (bird.getTop() < 0) or
+                            ((maxScore != None) and (self.score[bird.id] >= maxScore))):
                         bird.killBird(self.environment.getTotalMovement())
                         self.remBirds -= 1
 
