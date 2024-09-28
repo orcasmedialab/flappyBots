@@ -3,10 +3,12 @@
 
 import pygame
 from pygame.locals import *
-import gameResources as gr
 import numpy as np
 import sys
 import time
+
+import gameResources as gr
+from gameResources import maxScore
 
 
 ###############################
@@ -16,9 +18,12 @@ import time
 framerate = 60 #fps
 resetTime = 2 #sec
 numberIterations = 1 #if zero, run indefinitely
+maxScoreLimit = 3 #Stop program after hitting max score this many times
+scoreLimitConsecutive = True #Must hit max score consecutively to exit
 guiEnabled = True
 collisionsEnabled = True
 realTime = False
+useBirdProgress = True #use distance traversed for score
 #bird stuff
 numBirds = 100
 flapProbability = 30 # p=1/30, flap with probability p each time called
@@ -38,6 +43,7 @@ class gameController():
         #init gameplay
         self.gameplay = gr.gameplay(self.birdGroup, self.birdWorld, collisionsEnabled)
         self.completeRuns = 0 #number of runs executed
+        self.maxScoreCounter = 0
         self.reinitializeCounter()
 
     def reinitializeCounter(self):
@@ -76,7 +82,7 @@ class gameController():
         gameState['birdVel'] = self.birdGroup.getBirdVelocities()
         # State of game (i.e. gameover) and current or final score for all birds
         gameState['gameOver'] = self.isGameOver()
-        gameState['score'] = self.gameplay.getScore()
+        gameState['score'] = self.gameplay.getScore(useBirdProgress)
         
         return gameState
 
@@ -86,6 +92,10 @@ class gameController():
         jumpInstructionSet = np.random.choice([False, True], size = (numBirds,), 
                 p = [(flapProbability-1) / flapProbability, 1./flapProbability])
         return jumpInstructionSet
+
+    def falseAfterSleep(self):
+        time.sleep(resetTime)
+        return False
 
 
     def step(self, jumpInstructionSet):
@@ -101,11 +111,21 @@ class gameController():
                 self.resetCounter += 1
             else:
                 self.completeRuns += 1
-                if (numberIterations == 0) or (self.completeRuns < numberIterations):
+                if max(self.gameplay.getScore(False)) >= maxScore:
+                    self.maxScoreCounter += 1
+                elif scoreLimitConsecutive:
+                    self.maxScoreCounter = 0
+                
+                if (maxScoreLimit != None) and (self.maxScoreCounter >= maxScoreLimit):
+                    print('Max Score Limit reached.\nProgram cannot be improved further.')
+                    return self.falseAfterSleep()
+                elif (numberIterations == 0) or (self.completeRuns < numberIterations):
                     self.resetGame()
                 else:
-                    time.sleep(resetTime)
-                    sys.exit()
+                    print('Program complete.')
+                    return self.falseAfterSleep()
+        
+        return True
 
 
 

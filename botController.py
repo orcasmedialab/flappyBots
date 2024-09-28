@@ -2,6 +2,7 @@
 #botController.py
 
 import numpy as np
+
 import botAlgorithm as ba
 from botAlgorithm import lock
 
@@ -28,6 +29,7 @@ class botController():
         return geneticOptimizer
     
     def joinGaThread(self):
+        self.geneticOptimizer.disable()
         self.geneticOptimizer.join()
 
 

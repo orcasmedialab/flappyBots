@@ -45,8 +45,6 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 
 ## ToDo
 **Primary**
-- Make program exit more nicely (remove `sys.exit()`)
-- Program exits after certain number of "perfect scores"
 - Save training history of algorithm
 - Add runtime arguments related to training algorithm
 - Update README Features section
@@ -71,6 +69,7 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 
 **Non-Critical**
 - Add verbose runtime argument
+- Ensure game score(s) are printed at end
 - Consider reimplementing game score for algorithmic grading
 - Move randJumpGenerator() to Bot Controller
 - Move global definitions to yaml file

@@ -77,6 +77,7 @@ class geneticOptimizer(threading.Thread):
         self.scoreReady = False
         self.gannUpdated = True
         self.populationMatricies = None
+        self.abortCommand = None
         self.iterationsCompleted = 0
 
         self.goInstance = pygad.GA(
@@ -94,6 +95,9 @@ class geneticOptimizer(threading.Thread):
             on_generation = self.callbackGeneration
         )
 
+    def disable(self):
+        self.abortCommand = 'stop'
+
     def setNumGenerations(self, numIters):
         global numGenerations
         if numIters != None:
@@ -102,7 +106,7 @@ class geneticOptimizer(threading.Thread):
 
 
     def fitnessFunction(self, goInstance, solution, solutionIndex):
-        while True:
+        while self.abortCommand != 'stop':
             lock.acquire()
             if self.scoreReady:
                 #self.scoreReady = False #moved to callback function
@@ -110,6 +114,7 @@ class geneticOptimizer(threading.Thread):
                 return self.scores[solutionIndex]
             lock.release()
             time.sleep(lockWaitTime)
+        return self.scores[solutionIndex]
     
     def callbackGeneration(self, goInstance):
         self.generatePopMatricies()
@@ -118,7 +123,7 @@ class geneticOptimizer(threading.Thread):
         self.scoreReady = False  #ToDo: resolve redundant calls of fitnessFunction()
         self.iterationsCompleted += 1
         self.printScore()
-        return
+        return self.abortCommand
     
     def setScore(self, newScore):
         self.scores = newScore

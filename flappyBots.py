@@ -4,6 +4,7 @@
 import pygame
 from pygame.locals import *
 import argparse
+
 import gameController as gc
 import botController as bc
 
@@ -44,7 +45,7 @@ if __name__ == '__main__':
         jumpInstructions = bots.getInstructions(gameState)
 
         # Step-wise progress through game, each bird sent corresponding command
-        flappy.step(jumpInstructions)
+        run = flappy.step(jumpInstructions)
 
 
         for event in pygame.event.get():

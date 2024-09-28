@@ -30,7 +30,6 @@ scrollSpeed = 4
 pipeGapSize = 150 #space between top/bottom pipe
 pipeOffsetRange = 150 #+/-, range of random vertical shift
 pipeCadence = 400 #distance from one set of pipes to next
-useBirdProgress = True
 maxScore = 500 #Set to None to have no maximum score
 
 
@@ -308,7 +307,7 @@ class gameplay():
     def isGameOver(self):
         return self.gameOver
     
-    def getScore(self):
+    def getScore(self, useBirdProgress):
         if useBirdProgress == True:
             return self.birdGroup.getBirdProgress()
         return self.score
