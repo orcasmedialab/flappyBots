@@ -46,7 +46,6 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 ## ToDo
 **Primary**
 - Implement option to record logging only at program completion
-- Issue: Generations and Solutions are not logged in numeric order
 - Issue: Program crash can delete or partially delete log file (look into safedump)
 - Add high level Program Info to logging
 - Add ANN network info to logging (structure, etc.)

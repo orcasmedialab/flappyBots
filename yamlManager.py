@@ -48,11 +48,17 @@ class botLogger():
         for solution in range(self.numSolutions):
             solText = 'Solution ' + str(solution)
             if isinstance(popMat[solution][0], np.ndarray):
-                solutionDict[solText] = np.concatenate(
-                    [arr.flatten() for arr in popMat[solution]]
-                ).tolist()
+                #convert list of numpy arrays into single string
+                solutionDict[solText] = ', '.join([
+                    f'{val}' for val in np.concatenate(
+                        [arr.flatten() for arr in popMat[solution]]
+                    ).tolist()
+                ])
             else:
-                solutionDict[solText] = popMat[solution].tolist()
+                #convert numpy array into single string
+                solutionDict[solText] = ', '.join(
+                    [f'{val}' for val in popMat[solution].tolist()]
+                )
             #print(solutionDict[solText], '\n')
 
         self.solutionSet[genText] = solutionDict
@@ -66,7 +72,8 @@ class botLogger():
             yaml.dump(
                 self.solutionSet, 
                 outfile, 
-                default_flow_style = False
+                default_flow_style = False,
+                sort_keys=False
             )
 
 
