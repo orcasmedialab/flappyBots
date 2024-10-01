@@ -45,11 +45,20 @@ python3 flappyBots.py [-h] [--iters] [--gui] [--fast] [--birds]
 
 ## ToDo
 **Primary**
-- Save training history of algorithm
+- Implement option to record logging only at program completion
+- Issue: Generations and Solutions are not logged in numeric order
+- Issue: Program crash can delete or partially delete log file (look into safedump)
+- Add high level Program Info to logging
+- Add ANN network info to logging (structure, etc.)
+- Add generation-specific info to logging
+- Ability to import solution(s) from logs
 - Add runtime arguments related to training algorithm
+- Add ability to gracefully exit headless 
+- Extend mutex lock beyond just the jump calculation
 - Update README Features section
 - Optimize GANN structure and parameters
 - Address redundant repeat calls of fitnessFunction()
+- Import only specific (or best) solution from generation
 - Auto-set number of iterations
 - Display game score on screen
 - Add reset button on screen

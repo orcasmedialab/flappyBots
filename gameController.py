@@ -117,7 +117,7 @@ class gameController():
                     self.maxScoreCounter = 0
                 
                 if (maxScoreLimit != None) and (self.maxScoreCounter >= maxScoreLimit):
-                    print('Max Score Limit reached.\nProgram cannot be improved further.')
+                    print('Max Score Limit reached.\nSolution cannot be improved further.')
                     return self.falseAfterSleep()
                 elif (numberIterations == 0) or (self.completeRuns < numberIterations):
                     self.resetGame()

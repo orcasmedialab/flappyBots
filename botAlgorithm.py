@@ -5,8 +5,12 @@ import pygad
 import pygad.nn
 import pygad.gann
 import threading
-import time
 import numpy as np
+import time
+from time import gmtime, strftime
+
+import yamlManager
+
 
 ###############################
 ####### Definitions ###########
@@ -48,7 +52,7 @@ class botAlgorithm():
         self.initialPopulation = self.populationVectors.copy()
 
 
-    def getIntialPop(self):
+    def getInitialPop(self):
         return self.initialPopulation
     
     def getPopNetwork(self):
@@ -56,7 +60,7 @@ class botAlgorithm():
     
     def updateWeights(self, populationMatricies):
         self.gannInstance.update_population_trained_weights(
-                population_trained_weights=populationMatricies)
+                population_trained_weights = populationMatricies)
     
     def calculateInstruction(self, inputs, solutionIndex):
         instruction = pygad.nn.predict(
@@ -70,22 +74,25 @@ class geneticOptimizer(threading.Thread):
     def __init__(self, algoClass, numIters):
         super(geneticOptimizer, self).__init__()
         self.botAlgorithm = algoClass
-        initialPopulation = self.botAlgorithm.getIntialPop()
-        self.setNumGenerations(numIters)
+        self.populationMatricies = self.botAlgorithm.getInitialPop()
+        self.numBots = len(self.populationMatricies)
+        self.datetime = dict()
 
-        self.scores = np.zeros(len(initialPopulation))
+        self.setNumGenerations(numIters)
+        self.createLogger()
+
+        self.scores = np.zeros(self.numBots)
         self.scoreReady = False
         self.gannUpdated = True
-        self.populationMatricies = None
         self.abortCommand = None
         self.iterationsCompleted = 0
 
         self.goInstance = pygad.GA(
             num_generations = self.numGenerations,
-            initial_population = initialPopulation,
+            initial_population = self.populationMatricies,
             num_parents_mating = numParentsMating,
             fitness_func = self.fitnessFunction,
-            fitness_batch_size = len(initialPopulation),
+            fitness_batch_size = self.numBots,
             parent_selection_type = parentSelectionType,
             keep_parents = keepParents,
             crossover_type = crossoverType,
@@ -95,8 +102,22 @@ class geneticOptimizer(threading.Thread):
             on_generation = self.callbackGeneration
         )
 
+    def createLogger(self):
+        #organize network structuret
+        self.captureDatetime()
+        temp = 1 #ToDo replace
+        self.botLogger = yamlManager.botLogger(temp, self.numBots, self.datetime)
+
+    def captureDatetime(self):
+        self.datetime['filename'] = strftime("%Y%m%d-%H%M%S", gmtime())
+        self.datetime['logString'] = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+
+
     def disable(self):
         self.abortCommand = 'stop'
+
+    def saveSolutions(self):
+        self.botLogger.saveGeneration(self.populationMatricies, self.scores)
 
     def setNumGenerations(self, numIters):
         global numGenerations
@@ -122,11 +143,13 @@ class geneticOptimizer(threading.Thread):
         self.gannUpdated = True
         self.scoreReady = False  #ToDo: resolve redundant calls of fitnessFunction()
         self.iterationsCompleted += 1
-        self.printScore()
         return self.abortCommand
     
-    def setScore(self, newScore):
+    def setScore(self, newScore, enableLogging):
         self.scores = newScore
+        self.printScore()
+        if enableLogging:
+            self.saveSolutions()
         self.scoreReady = True
 
     def getGenUpdateFlag(self):

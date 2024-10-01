@@ -8,6 +8,7 @@ from botAlgorithm import lock
 
 
 numInputs = 4 #must be consistent with what's returned by game and what model expects
+enableLogging = False #Warning: Not yet stable
 
 
 class botController():
@@ -64,7 +65,7 @@ class botController():
 
         else:
             if self.scoreUploaded == False:
-                self.geneticOptimizer.setScore(self.currentState['score'])
+                self.geneticOptimizer.setScore(self.currentState['score'], enableLogging)
                 self.scoreUploaded = True
                 self.geneticOptimizer.resetGenUpdateFlag()
             
